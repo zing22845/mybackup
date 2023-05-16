@@ -1,0 +1,32 @@
+{
+    "action": "backup",
+    "log_level": "debug",
+    "file_prefix": "binlog_upload",
+    "base_dir": "mdctest_0000",
+    "task_name": "mdctest_0000.xx.xx.xx.xx_5724",
+    "source": {
+        "type": "file",
+        "speed_limit": "80M",
+        "storage": {
+            "type": "fs",
+            "file_path": "mybackup"
+        }
+    },
+    "target": {
+        "type": "file",
+        "storage": {
+            "type": "fs",
+            "prefix": "/home/dev_jinjing02/nfs/mdctest_0000/binlog-",
+            "extra_files": [
+                {
+                    "prefix": "/home/dev_jinjing02/nfs/filebackup/"
+                },
+                {
+                    "prefix": "/home/dev_jinjing02/nfs/mdctest/mdctest_0000/"
+                }
+            ]
+        },
+        "expire_method": "by_duration",
+        "expire_duration": "168h"
+    }
+}

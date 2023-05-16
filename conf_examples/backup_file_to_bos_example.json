@@ -1,0 +1,42 @@
+{
+    "action": "backup",
+    "log_level": "debug",
+    "base_dir": "backup_test",
+    "task_name": "backup_test",
+    "source": {
+        "type": "file",
+        "speed_limit": "80M",
+        "storage": {
+            "type": "fs",
+            "file_path": "/ssd1/dev_jinjing02/icode/baidu/mdc/mysql_backup_recovery_tool/helper/",
+            "exclude_dirs": [
+                "/proc",
+                "/dev",
+                "/cgroups",
+                "/sys",
+                "/tmp",
+                "/home/casio"
+            ]
+        }
+    },
+    "target": {
+        "type": "file",
+        "pack_method": "tar",
+        "compress_method": "gzip",
+        "tar_ignore_file_change": true,
+        "tar_ignore_all_errors": false,
+        "storage": {
+            "type": "s3",
+            "endpoint": "xx.xx.xx.xx:9000",
+            "region": "bj",
+            "access_key": "xxxxxx",
+            "secret_key": "xxxxxx",
+            "bucket": "mybackup-test",
+            "prefix": "mdctest_0000/helper-",
+            "enable_ssl": true,
+            "secure_tls": false
+        },
+        "expire_method": "by_duration",
+        "expire_duration": "168h"
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "action": "list",
+    "log_level": "debug",
+    "base_dir": "pgtest_0000",
+    "task_name": "pgtest_0000.xx.xx.xx.xx_5724",
+    "target": {
+        "type": "pg_backup",
+        "storage": {
+            "type": "s3",
+            "endpoint": "xx.xx.xx.xx:9000",
+            "region": "bj",
+            "access_key": "xxxxxx",
+            "secret_key": "xxxxxx",
+            "bucket": "mybackup-test",
+            "prefix": "/pgbackrest/",
+            "enable_ssl": true,
+            "secure_tls": false
+        },
+        "data_path": "/home/dev_jinjing02/pg12/var",
+        "repo_name": "pgtest_0000"
+    },
+    "utils": {
+        "pgbackrest": {
+            "main": "/home/dev_jinjing02/pg12/bin/pgbackrest",
+            "config_file": "/home/dev_jinjing02/icode/baidu/mdc/mysql_backup_recovery_tool/output/pgtest_0000/pgbackrest_list.conf"
+        }
+    }
+}

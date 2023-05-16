@@ -1,0 +1,32 @@
+{
+    "action": "upload",
+    "log_level": "debug",
+    "base_dir": "test_upload",
+    "task_name": "test_upload",
+    "source": {
+        "type": "file",
+        "speed_limit": "80M",
+        "storage": {
+            "type": "fs",
+            "file_path": "/home/dev_jinjing02/icode/baidu/mdc/mysql_backup_recovery_tool/output/mdctest_0000"
+        }
+    },
+    "target": {
+        "type": "file",
+        "pack_method": "tar",
+        "tar_arcname": ".",
+        "compress_method": "gzip",
+        "storage": {
+            "type": "s3",
+            "endpoint": "xx.xx.xx.xx:9000",
+            "region": "bj",
+            "access_key": "xxxxxx",
+            "secret_key": "xxxxxx",
+            "bucket": "mybackup-test",
+            "enable_ssl": true,
+            "secure_tls": false,
+            "file_path": "mdc/mysql_backup_recovery_tool/helper.tgz"
+        },
+        "tar_ignore_all_errors": true
+    }
+}

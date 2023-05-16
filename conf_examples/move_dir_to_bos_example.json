@@ -1,0 +1,30 @@
+{
+    "action": "move",
+    "log_level": "debug",
+    "base_dir": "test_upload",
+    "task_name": "test_upload",
+    "source": {
+        "type": "file",
+        "speed_limit": "80M",
+        "storage": {
+            "type": "fs",
+            "file_path": "xxx"
+        }
+    },
+    "target": {
+        "type": "file",
+        "pack_method": "tar",
+        "compress_method": "gzip",
+        "storage": {
+            "type": "s3",
+            "endpoint": "xx.xx.xx.xx:9000",
+            "region": "bj",
+            "access_key": "xxxxxx",
+            "secret_key": "xxxxxx",
+            "bucket": "mybackup-test",
+            "enable_ssl": true,
+            "secure_tls": false,
+            "file_path": "xxx.tgz"
+        }
+    }
+}

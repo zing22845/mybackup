@@ -1,0 +1,51 @@
+{
+    "action": "backup",
+    "log_level": "debug",
+    "base_dir": "mdctest_0000",
+    "task_name": "mdctest_0000-backup",
+    "meta_db_path": "mdctest_0000/mdctest_0000.db",
+    "source": {
+        "type": "mysql",
+        "defaults_file": "/home/dev_jinjing02/mysql5724/etc/user.root.cnf"
+    },
+    "target": {
+        "type": "snapshot_set",
+        "snapshot_set": [
+            {
+                "type": "snapshot",
+                "storage": {
+                    "type": "fs",
+                    "prefix": "./mdctest_0000/"
+                },
+                "speed_limit": "160M",
+                "unpack_method": "xbstream"
+            },
+            {
+                "type": "snapshot",
+                "storage": {
+                    "type": "tcp",
+                    "ip": "10.143.248.36",
+                    "port": 27595,
+                    "password": "xxxxxx"
+                },
+                "speed_limit": "160M"
+            }
+        ]
+    },
+    "utils": {
+        "xtrabackup": {
+            "main": "/home/dev_jinjing02/percona/xtrabackup_baidu_gcc82/xtrabackup-2.4.8-public",
+            "compress_switch": 1,
+            "stream_method": "xbstream",
+            "parallel": 8,
+            "compress_threads": 4,
+            "throttle": 100
+        },
+        "xbstream": {
+            "main": "/home/dev_jinjing02/percona/xtrabackup_baidu_gcc82/xbstream-8.0",
+            "parallel": 4,
+            "decompress_switch": 1,
+            "decompress_threads": 2
+        }
+    }
+}

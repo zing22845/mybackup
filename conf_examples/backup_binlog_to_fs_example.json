@@ -1,0 +1,34 @@
+{
+    "action": "backup",
+    "log_level": "info",
+    "base_dir": "mdctest_0000",
+    "task_name": "mdctest_0000.xx.xx.xx.xx_5724",
+    "source": {
+        "type": "binlog_stream",
+        "user": "mysqlsync_test",
+        "password": "mysqlsync_test",
+        "host": "xx.xx.xx.xx",
+        "port": 5724,
+        "defaults_file": "",
+        "exclude_gtids": "0c51ea70-2aa4-11ed-969c-98039b760d64:1-32",
+        "meta_db_path": "mdctest_0000/mdctest_0000.db",
+        "flush_interval": "5s"
+    },
+    "target": {
+        "type": "binlog_set",
+        "default_storage_id": "default_storage",
+        "storages": {
+            "default_storage": {
+                "type": "fs",
+                "prefix": "/home/dev_jinjing02/nfs/mdctest_0000/",
+                "extra_files": [
+                    {
+                        "prefix": "/home/dev_jinjing02/nfs/mdctest/mdctest_0000/"
+                    }
+                ]
+            }
+        },
+        "default_compress_method": "gzip",
+        "default_speed_limit": "160M"
+    }
+}

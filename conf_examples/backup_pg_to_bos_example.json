@@ -1,0 +1,42 @@
+{
+    "action": "backup",
+    "log_level": "debug",
+    "base_dir": "pgtest_0000",
+    "base_dir_expire_duration": "720h",
+    "task_name": "pgtest_0000.xx.xx.xx.xx_5724",
+    "source": {
+        "type": "postgresql",
+        "base_dir": "/home/dev_jinjing02/pg12",
+        "data_path": "/home/dev_jinjing02/pg12/var"
+    },
+    "target": {
+        "type": "pg_backup",
+        "storage": {
+            "type": "s3",
+            "endpoint": "xx.xx.xx.xx:9000",
+            "region": "bj",
+            "access_key": "xxxxxx",
+            "secret_key": "xxxxxx",
+            "bucket": "mybackup-test",
+            "prefix": "/pgbackrest/",
+            "enable_ssl": true,
+            "secure_tls": false
+        },
+        "repo_name": "pgtest_0000",
+        "backup_type": "incr",
+        "retention_full_type": "time",
+        "retention_full": 2,
+        "retention_history": 5,
+        "bundle": true,
+        "backup_delta": true,
+        "backup_full_interval_type": "time",
+        "backup_full_interval": 1,
+        "compress_method": "zst"
+    },
+    "utils": {
+        "pgbackrest": {
+            "main": "/home/dev_jinjing02/pg12/bin/pgbackrest",
+            "config_file": "/home/dev_jinjing02/icode/baidu/mdc/mysql_backup_recovery_tool/output/pgtest_0000/pgbackrest.conf"
+        }
+    }
+}

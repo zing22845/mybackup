@@ -1,0 +1,38 @@
+{
+    "action": "recover",
+    "base_dir": "mdctest_0000",
+    "task_name": "mdctest_0000.xx.xx.xx.xx_5724",
+    "source": {
+        "type": "snapshot",
+        "storage": {
+            "type": "fs",
+            "file_path": "/home/dev_jinjing02/nfs/mdctest_0000/mdctest_0000.xx.xx.xx.xx_5724-snapshot-20211107_212050-8631"
+        },
+        "pack_method": "xbstream",
+        "from_lsn": "0",
+        "encrypt_method": "AES256",
+        "encrypt_key": "GCHFLrDFVx6UAsRb88uLVbAVWbK+Yzfs"
+    },
+    "target": {
+        "type": "snapshot",
+        "speed_limit": "160M",
+        "storage": {
+            "type": "fs",
+            "prefix": "mdctest_0000"
+        }
+    },
+    "utils": {
+        "xtrabackup": {
+            "main": "/home/dev_jinjing02/percona/xtrabackup_baidu_gcc82/xtrabackup-2.4.8-public",
+            "parallel": 4,
+            "prepare_remove_incremental_dir": true,
+            "prepare_remove_xtrabackup_log_file": true
+        },
+        "xbstream": {
+            "main": "/home/dev_jinjing02/percona/xtrabackup_baidu_gcc82/xbstream-8.0",
+            "parallel": 4,
+            "decompress_switch": 1,
+            "decompress_threads": 2
+        }
+    }
+}

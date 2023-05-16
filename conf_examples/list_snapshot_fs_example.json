@@ -1,0 +1,18 @@
+{
+    "action": "list",
+    "log_level": "debug",
+    "base_dir": "mdctest_0000",
+    "task_name": "mdctest_0000.xx.xx.xx.xx_5724",
+    "target": {
+        "type": "snapshot",
+        "storage": {
+            "type": "fs",
+            "prefix": "/home/dev_jinjing02/nfs/mdctest_0000/",
+            "extra_files": [
+                {
+                    "prefix": "/home/dev_jinjing02/nfs/mdctest/mdctest_0000/"
+                }
+            ]
+        }
+    }
+}

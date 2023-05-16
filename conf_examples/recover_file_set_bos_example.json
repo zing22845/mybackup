@@ -1,0 +1,55 @@
+{
+    "action": "recover",
+    "base_dir": "mdctest_0000",
+    "task_name": "mdctest_0000.xx.xx.xx.xx_5724",
+    "source": {
+        "type": "file_set",
+        "file_set": [
+            {
+                "type": "file",
+                "storage": {
+                    "type": "s3",
+                    "endpoint": "xx.xx.xx.xx:9000",
+                    "region": "bj",
+                    "access_key": "xxxxxx",
+                    "secret_key": "xxxxxx",
+                    "bucket": "mybackup-test",
+                    "enable_ssl": true,
+                    "secure_tls": false,
+                    "file_path": "mdctest_0000/mdctest_0000.xx.xx.xx.xx_5724-snapshot-20220113_122437-4677"
+                }
+            },
+            {
+                "type": "file",
+                "storage": {
+                    "type": "s3",
+                    "endpoint": "xx.xx.xx.xx:9000",
+                    "region": "bj",
+                    "access_key": "xxxxxx",
+                    "secret_key": "xxxxxx",
+                    "bucket": "mybackup-test",
+                    "enable_ssl": true,
+                    "secure_tls": false,
+                    "file_path": "mdctest_0000/mdctest_0000.xx.xx.xx.xx_5724-snapshot-20220113_105641-8448"
+                }
+            }
+        ]
+    },
+    "target": {
+        "type": "file_set",
+        "file_set": [
+            {
+                "storage": {
+                    "type": "fs",
+                    "prefix": "mdctest_0000/"
+                }
+            },
+            {
+                "storage": {
+                    "type": "fs",
+                    "prefix": "mdctest_0000/"
+                }
+            }
+        ]
+    }
+}

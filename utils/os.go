@@ -107,10 +107,17 @@ func GetGzipUncompressedSize(filePath string) (uncompressedSize uint32, err erro
 }
 
 // clean expired files in folder
-func CleanExpiredSubFiles(filePath string, expireDuration time.Duration) (err error) {
+func CleanExpiredSubFiles(filePath string, expireDuration time.Duration, ignoreErr bool) (err error) {
 	info, err := os.Stat(filePath)
-	if err != nil {
-		return err
+	if ignoreErr {
+		if err != nil {
+			log.Warnf("get stat of %s failed: %s", filePath, err)
+			return nil
+		}
+	} else {
+		if err != nil {
+			return err
+		}
 	}
 
 	if !info.IsDir() {
@@ -121,20 +128,27 @@ func CleanExpiredSubFiles(filePath string, expireDuration time.Duration) (err er
 	log.Infof("deleting files in directory %s last modify time before %s, expireDuration: %s",
 		filePath, expireDatetime.Format(time.RFC3339), durafmt.Parse(expireDuration))
 	return filepath.Walk(filePath, func(file string, fi os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		info, err := os.Stat(file)
-		if err != nil || info.ModTime().After(expireDatetime) {
+		if fi != nil && fi.ModTime().After(expireDatetime) {
 			return nil
 		}
-		warn := os.Remove(file)
-		if warn != nil {
-			log.Infof("failed to remove expired file: %s, ModTime: %s, err: %s", file, info.ModTime(), warn)
-			return nil
+		if ignoreErr {
+			warn := os.Remove(file)
+			if warn != nil {
+				log.Warnf("failed to remove expired file: %s, ModTime: %s, err: %s", file, fi.ModTime(), warn)
+				return nil
+			}
+		} else {
+			if err != nil {
+				return err
+			}
+			err = os.Remove(file)
+			if err != nil {
+				return fmt.Errorf("failed to remove expired file: %s, ModTime: %s, err: %w", file, fi.ModTime(), err)
+			}
 		}
-		log.Infof("removed expired file: %s, ModTime: %s", file, info.ModTime())
+		log.Infof("removed expired file: %s, ModTime: %s", file, fi.ModTime())
 		return nil
+
 	})
 }
 

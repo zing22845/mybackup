@@ -27,6 +27,7 @@ type Snapshot struct {
 	StorageID        string          `json:"storage_id,omitempty"`
 	IncrementalLevel int16           `json:"incremental_level,omitempty"`
 	IncrementalDIR   string          `json:"incremental_dir,omitempty"`
+	Export           bool            `json:"export,omitempty"`
 	ExpireFiles      []storage.File  `json:"expire_files,omitempty"`
 	ListAllFiles     []storage.File  `json:"list_all_files,omitempty"`
 	Storage          storage.Storage `json:"storage,omitempty"`
@@ -108,6 +109,11 @@ func (s *Snapshot) UnmarshalJSON(data []byte) (err error) {
 			}
 		case "origin_size":
 			err = json.Unmarshal(v, &s.OriginSize)
+			if err != nil {
+				return err
+			}
+		case "export":
+			err = json.Unmarshal(v, &s.Export)
 			if err != nil {
 				return err
 			}
@@ -441,13 +447,13 @@ func (s *Snapshot) Recover(ctx context.Context, u utils.Utils, targetObject Obje
 		t.DatetimeStart = t.Timers["recover"].StartTime
 		t.RecoverStartTime = t.Timers["recover"].StartTime
 		defer func(s *Snapshot) {
-			t.Timers["recover"].Stop()
-			log.Infof("duration recovery: %s", t.Timers["recover"].Duration.String())
-			t.RecoverEndTime = t.Timers["recover"].StopTime
-			if t.Err == nil {
-				t.Status = "success"
+			s.Timers["recover"].Stop()
+			log.Infof("duration recovery: %s", s.Timers["recover"].Duration.String())
+			s.RecoverEndTime = s.Timers["recover"].StopTime
+			if s.Err == nil {
+				s.Status = "success"
 			}
-			errMeta := t.WriteMeta()
+			errMeta := s.WriteMeta()
 			if errMeta != nil && err == nil {
 				err = errMeta
 			}
@@ -554,6 +560,7 @@ func (s *Snapshot) Prepare(ctx context.Context, u utils.Utils) (err error) {
 	if u.Xtrabackup.UseMemory == "" {
 		u.Xtrabackup.UseMemory = "500M"
 	}
+	u.Xtrabackup.Export = s.Export
 	err = u.Xtrabackup.GenerateCMD()
 	if err != nil {
 		return fmt.Errorf("generate xtrabackup command failed: %w", err)

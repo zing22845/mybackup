@@ -37,6 +37,7 @@ type Xtrabackup struct {
 	PrepareRemoveXtrabackupLogFile bool                `json:"prepare_remove_xtrabackup_log_file,omitempty"`
 	Databases                      map[string][]string `json:"databases,omitempty"`
 	DatabasesFile                  string              `json:"databases_file,omitempty"`
+	Export                         bool                `json:"export,omitempty"`
 	User                           string              `json:"-"`
 	Password                       Password            `json:"-"`
 	Host                           string              `json:"-"`
@@ -350,6 +351,7 @@ func (x *Xtrabackup) GeneratePrepareCMD() (err error) {
 	xtrabackupOptIbbackup := ""
 	xtrabackupOptKeyringFileData := ""
 	xtrabackupOptPluginDIR := ""
+	xtrabackupOptExport := ""
 	if x.IsInnobackupex {
 		// set defaults file
 		defaultsFilePath := filepath.Join(x.TargetDIR, "backup-my.cnf")
@@ -372,6 +374,10 @@ func (x *Xtrabackup) GeneratePrepareCMD() (err error) {
 		if x.ApplyLogOnly {
 			xtrabackupOptApplyLogOnly = "--apply-log-only"
 		}
+		// set --export
+		if x.Export {
+			xtrabackupOptExport = "--export"
+		}
 		// set --xtrabackup-plugin-dir
 		if x.PluginDIR != "" {
 			xtrabackupOptPluginDIR = fmt.Sprintf(
@@ -390,11 +396,12 @@ func (x *Xtrabackup) GeneratePrepareCMD() (err error) {
 		xtrabackupOptTarget = fmt.Sprintf("--target-dir=%s", x.TargetDIR)
 	}
 	// get xtrabackup command
-	cmdStr := fmt.Sprintf("%s %s %s %s %s %s %s %s %s %s",
+	cmdStr := fmt.Sprintf("%s %s %s %s %s %s %s %s %s %s %s",
 		x.Main,
 		xtrabackupOptDefaultsFile,
 		xtrabackupOptIbbackup,
 		xtrabackupOptAction,
+		xtrabackupOptExport,
 		xtrabackupOptApplyLogOnly,
 		xtrabackupOptUseMemory,
 		xtrabackupOptPluginDIR,

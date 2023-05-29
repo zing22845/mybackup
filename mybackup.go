@@ -214,7 +214,7 @@ func main() {
 	}
 	// clean expired files in base dir
 	if conf.BaseDIRExpireDuration > 0 {
-		err = utils.CleanExpiredSubFiles(conf.BaseDIR, conf.BaseDIRExpireDuration)
+		err = utils.CleanExpiredSubFiles(conf.BaseDIR, conf.BaseDIRExpireDuration, true)
 		if err != nil {
 			log.Infof("clean expired sub files of %s failed: %+v", conf.BaseDIR, err)
 		}

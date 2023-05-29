@@ -216,25 +216,77 @@ func (ss *SnapshotSet) WriteMeta() error {
 	return ss.Err
 }
 
-func (ss *SnapshotSet) sortSerial() {
+func (ss *SnapshotSet) sortSerial() (err error) {
+	defer func() {
+		if err := recover(); err != nil {
+			err = fmt.Errorf("panic occurred during sort: %+v", err)
+		}
+	}()
 	// sort snapshot set by FromLSN
 	sort.Slice(ss.SnapshotSet, func(i, j int) bool {
-		fromLSNI, err := strconv.Atoi(strings.ReplaceAll(ss.SnapshotSet[i].FromLSN, ":", ""))
-		if err != nil {
-			log.Warnf("invalid from lsn: %s, error: %s", ss.SnapshotSet[i].FromLSN, err.Error())
-			return false
+		var fromLSNU64I []uint64
+		var fromLSNU64J []uint64
+
+		fromLSNStrI := strings.Split(ss.SnapshotSet[i].FromLSN, ":")
+		fromLSNStrJ := strings.Split(ss.SnapshotSet[j].FromLSN, ":")
+
+		// fromLSNStrI: convert string slice to uint64 slice
+		for n, strLSN := range fromLSNStrI {
+			fromLSNU64I[n], err = strconv.ParseUint(strLSN, 10, 64)
+			if err != nil {
+				panic(fmt.Sprintf("convert %s to uint64 failed: %+v", strLSN, err))
+			}
 		}
-		fromLSNJ, err := strconv.Atoi(strings.ReplaceAll(ss.SnapshotSet[j].FromLSN, ":", ""))
-		if err != nil {
-			log.Warnf("invalid from lsn: %s, error: %s", ss.SnapshotSet[j].FromLSN, err.Error())
+
+		// fromLSNStrJ: convert string slice to uint64 slice
+		for n, strLSN := range fromLSNStrJ {
+			fromLSNU64J[n], err = strconv.ParseUint(strLSN, 10, 64)
+			if err != nil {
+				panic(fmt.Sprintf("convert %s to uint64 failed: %+v", strLSN, err))
+			}
+		}
+
+		// empty lsn
+		if len(fromLSNU64I) == 0 || len(fromLSNU64J) == 0 {
+			panic("empty LSN")
+		}
+
+		// 0 < 1:1, 1 > 0:1, 1:2 < 2:1, 1:2 < 1:20
+		if fromLSNU64I[0] < fromLSNU64J[0] {
 			return true
+		} else if fromLSNU64I[0] > fromLSNU64J[0] {
+			return false
+		} else if fromLSNU64I[0] == fromLSNU64J[0] {
+			if len(fromLSNU64I) < len(fromLSNU64J) {
+				return true
+			} else if len(fromLSNU64I) > len(fromLSNU64J) {
+				return false
+			} else if len(fromLSNU64I) == len(fromLSNU64J) {
+				if len(fromLSNU64I) > 2 {
+					panic(fmt.Sprintf("invalid LSN format: %s", ss.SnapshotSet[i].FromLSN))
+				}
+				if len(fromLSNU64I) == 1 {
+					panic(fmt.Sprintf("equal LSN: %s", ss.SnapshotSet[i].FromLSN))
+				}
+				if fromLSNU64I[1] < fromLSNU64J[1] {
+					return true
+				} else if fromLSNU64I[1] > fromLSNU64J[1] {
+					return false
+				} else if fromLSNU64I[1] == fromLSNU64J[1] {
+					panic(fmt.Sprintf("equal LSN: %s", ss.SnapshotSet[i].FromLSN))
+				}
+			}
 		}
-		return fromLSNI < fromLSNJ
+		return false
 	})
+	return
 }
 
 func (ss *SnapshotSet) recoverSerial(ctx context.Context, u utils.Utils, target *Snapshot, overwrite bool) (err error) {
-	ss.sortSerial()
+	err = ss.sortSerial()
+	if err != nil {
+		return err
+	}
 	// download snapshot
 	for n, source := range ss.SnapshotSet {
 		// download
